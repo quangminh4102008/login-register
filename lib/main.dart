@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:crypto/crypto.dart';
 import 'dart:convert';
 import 'package:sign_in_button/sign_in_button.dart';
-
+import 'package:authen/screens/reward_screen.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -75,7 +75,6 @@ class _LoginPageState extends State<LoginPage> {
   // Hàm xử lý đăng nhập
   void _handleLogin() {
     FocusScope.of(context).unfocus();
-
     if (_loginFormKey.currentState!.validate()) {
       final enteredEmail = _emailController.text.trim().toLowerCase();
       final enteredPassword = _passwordController.text.trim();
@@ -93,10 +92,16 @@ class _LoginPageState extends State<LoginPage> {
               backgroundColor: Colors.red),
         );
       } else {
+        // Đăng nhập thành công, điều hướng đến Ví thưởng
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
               content: Text('Đăng nhập thành công!'),
               backgroundColor: Colors.green),
+        );
+
+        // Sử dụng pushReplacement để người dùng không thể quay lại màn hình đăng nhập bằng nút back
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const RewardScreen()),
         );
       }
     }
