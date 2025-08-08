@@ -5,11 +5,26 @@ import '../models/reward.dart';
 
 class RewardDetailScreen extends StatelessWidget {
   final Reward reward;
+  // Nhận các tham số mới từ RewardScreen
+  final int userCoins;
+  final VoidCallback onRedeem; // VoidCallback là kiểu hàm không tham số, không trả về giá trị
 
-  const RewardDetailScreen({Key? key, required this.reward}) : super(key: key);
+  const RewardDetailScreen({
+    Key? key,
+    required this.reward,
+    required this.userCoins, // Yêu cầu phải có khi khởi tạo
+    required this.onRedeem,    // Yêu cầu phải có khi khởi tạo
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // Tính toán các điều kiện để quyết định có cho phép đổi hay không
+    final bool isOutOfStock = reward.quantity == 0;
+    final bool hasReachedLimit = reward.timesRedeemedByUser >= reward.redemptionLimit;
+    final bool canAfford = userCoins >= reward.cost;
+    // Tổng hợp lại điều kiện cuối cùng
+    final bool canRedeem = !isOutOfStock && !hasReachedLimit && canAfford;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Chi Tiết Phần Thưởng'),
@@ -46,14 +61,13 @@ class RewardDetailScreen extends StatelessWidget {
                     ),
                   ),
                   const Divider(height: 32.0),
-                  // CẬP NHẬT: Hiển thị nội dung chi tiết (content) thay vì mô tả (description)
                   Text(
-                    'Điều khoản và Điều kiện:', // Thêm tiêu đề cho phần nội dung
+                    'Điều khoản và Điều kiện:',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8.0),
                   Text(
-                    reward.content, // Sử dụng trường content mới
+                    reward.content,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: Colors.grey.shade800,
                       height: 1.5,
@@ -89,11 +103,31 @@ class RewardDetailScreen extends StatelessWidget {
           ],
         ),
       ),
+      // THÊM MỚI: Thanh chứa nút bấm ở dưới cùng màn hình
+      bottomNavigationBar: Padding(
+        // Thêm padding để nút không bị dính vào cạnh màn hình
+        padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
+        child: ElevatedButton(
+          // Dựa vào điều kiện `canRedeem` để bật/tắt nút
+          onPressed: canRedeem ? onRedeem : null,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blue,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            textStyle: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+            // Style cho nút khi bị vô hiệu hóa
+            disabledBackgroundColor: Colors.grey.shade400,
+          ),
+          child: const Text('Đổi Ngay'),
+        ),
+      ),
     );
   }
 
   Widget _buildInfoRow(BuildContext context, {required IconData icon, required Color color, required String label, required String value}) {
-    // ... (Giữ nguyên widget phụ này)
     return Row(
       children: [
         Icon(icon, color: color),

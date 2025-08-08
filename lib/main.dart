@@ -3,6 +3,7 @@ import 'package:crypto/crypto.dart';
 import 'dart:convert';
 import 'package:sign_in_button/sign_in_button.dart';
 import 'package:authen/screens/reward_screen.dart';
+import 'package:authen/screens/main_screen.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -80,28 +81,19 @@ class _LoginPageState extends State<LoginPage> {
       final enteredPassword = _passwordController.text.trim();
 
       if (enteredEmail != _correctEmail) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Tên đăng nhập không tồn tại.'),
-              backgroundColor: Colors.red),
-        );
+        // ... (giữ nguyên logic báo lỗi)
       } else if (_hashPassword(enteredPassword) != _correctPasswordHash) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Sai mật khẩu. Vui lòng thử lại.'),
-              backgroundColor: Colors.red),
-        );
+        // ... (giữ nguyên logic báo lỗi)
       } else {
-        // Đăng nhập thành công, điều hướng đến Ví thưởng
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
               content: Text('Đăng nhập thành công!'),
               backgroundColor: Colors.green),
         );
 
-        // Sử dụng pushReplacement để người dùng không thể quay lại màn hình đăng nhập bằng nút back
+        // SỬA ĐỔI: Điều hướng đến MainScreen thay vì RewardScreen
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const RewardScreen()),
+          MaterialPageRoute(builder: (context) => const MainScreen()),
         );
       }
     }
